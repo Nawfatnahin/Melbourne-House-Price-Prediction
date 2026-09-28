@@ -98,17 +98,6 @@ The notebook includes:
 - Feature importance bar charts
 - Model comparison tables
 
-## 📝 Lessons Learned
-
-- **Linear Regression** can produce negative R² scores when dealing with high-dimensional sparse features (600+ one-hot encoded columns) without regularization
-- **Random Forest** handles non-linear relationships and high-cardinality categorical features more robustly than linear models
-- Proper feature scaling is critical — `StandardScaler` helps normalize features with different ranges
-- **GridSearchCV** helps find optimal hyperparameters but doesn't always improve over defaults
-
-## 📄 License
-
-This project is open source and available under the [MIT License](LICENSE).
-
 ## 🤝 Acknowledgments
 
 - Dataset sourced from [Kaggle — Melbourne Housing Snapshot](https://www.kaggle.com/datasets/dansbecker/melbourne-housing-snapshot)
