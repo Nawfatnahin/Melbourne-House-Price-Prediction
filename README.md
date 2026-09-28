@@ -103,4 +103,6 @@ The notebook includes:
 - Dataset sourced from [Kaggle — Melbourne Housing Snapshot](https://www.kaggle.com/datasets/dansbecker/melbourne-housing-snapshot)
 - Built as part of a Machine Learning coursework project
 
-## This project is my first project as a new machine learning learner. I maybe update or change somethings in the future. Thanks if you saw my project and thanks to CampusX to help me learn machine learning easily.   
+## ✍️ Author's Note
+
+This project is my first project as a new machine learning learner. I may update or change some things in the future. Thanks for checking out my project, and thanks to [CampusX](https://www.youtube.com/@campusx-official) for helping me learn machine learning easily!
