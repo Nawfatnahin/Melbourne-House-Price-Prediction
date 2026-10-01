@@ -51,20 +51,26 @@ Evaluated on an unseen test split (20% holdout, 2,716 samples):
 - Train/Test Split: 80% training set (10,864 rows) and 20% testing set (2,716 rows) using `random_state=3`.
 
 ### 2. Feature Selection & Engineering
-- **Dropped Features (6)**: `['Regionname', 'Propertycount', 'Price', 'Postcode', 'Address', 'Date']` to eliminate redundancy and leakage.
-- **Retained Inputs (15)**: `Suburb`, `Rooms`, `Type`, `Method`, `SellerG`, `Distance`, `Bedroom2`, `Bathroom`, `Car`, `Landsize`, `BuildingArea`, `YearBuilt`, `CouncilArea`, `Lattitude`, `Longtitude`.
-- **Property Age Transformation**: Converted construction year into property age:
-  $$\text{Property Age} = 2026 - \text{YearBuilt}$$
+- **Dropped Features (7)**: `['Regionname', 'Propertycount', 'Price', 'Postcode', 'Address', 'Date', 'Suburb']` to eliminate redundancy, high-cardinality leakage, and extraneous identifiers.
+- **Retained Inputs (14)**: `Rooms`, `Type`, `Method`, `SellerG`, `Distance`, `Bedroom2`, `Bathroom`, `Car`, `Landsize`, `BuildingArea`, `YearBuilt`, `CouncilArea`, `Lattitude`, `Longtitude`.
+- **Domain-Specific Feature Engineering**:
+  - **Property Age**: Converted raw construction year into actionable property age:
+    $$\text{Property Age} = 2026 - \text{YearBuilt}$$
+  - **Total Rooms**: Aggregated structural space into a unified room metric:
+    $$\text{total\_rooms} = \text{Bedroom2} + \text{Bathroom}$$
+  - **Land-to-Building Ratio**: Quantifies land utilization and density:
+    $$\text{landhousingratio} = \frac{\text{BuildingArea}}{\text{Landsize}}$$
+- **Data Cleaning & Zero-Division Sanitization**: Properties with zero land size (such as units and apartments) produce infinite quotients (`np.inf`) during ratio calculation. These values are explicitly replaced with `np.nan` across both train and test splits so that the downstream pipeline handles them gracefully.
 
 ### 3. Preprocessing & Encoding Pipeline
-A unified `ColumnTransformer` handles missing values and categorical encoding simultaneously:
-- **Numerical Imputation**: Missing values in `YearBuilt` and `BuildingArea` are filled with `0` via `SimpleImputer(strategy='constant', fill_value=0)`.
-- **Frequent Imputation**: Missing `Car` parking counts are imputed using `SimpleImputer(strategy='most_frequent')`.
-- **High-Cardinality One-Hot Encoding**: `Suburb`, `Method`, `Type`, and `SellerG` are encoded with `OneHotEncoder(handle_unknown='ignore')`.
-- **Nested Pipeline for Council Area**: `CouncilArea` passes through sequential most-frequent imputation followed by one-hot encoding.
-- **Passthrough Features**: `Rooms`, `Distance`, `Bedroom2`, `Bathroom`, `Landsize`, `Lattitude`, and `Longtitude` pass through without loss of spatial fidelity.
+A scikit-learn `ColumnTransformer` handles missing value imputation and categorical encoding in a single modular step:
+- **Zero-Fill Constant Imputation (`trf1`)**: Missing values in `YearBuilt`, `BuildingArea`, and `landhousingratio` are imputed with `0` via `SimpleImputer(strategy='constant', fill_value=0)`.
+- **Mode Imputation (`trf2`)**: Missing `Car` parking space counts are filled using `SimpleImputer(strategy='most_frequent')`.
+- **Categorical One-Hot Encoding (`trf3`)**: `Method`, `Type`, and `SellerG` are encoded via `OneHotEncoder(handle_unknown='ignore')`.
+- **Nested Pipeline for Council Area (`trf4`)**: `CouncilArea` passes through sequential most-frequent imputation followed by one-hot encoding.
+- **Passthrough Features**: `Rooms`, `Distance`, `Bedroom2`, `Bathroom`, `Landsize`, `Lattitude`, `Longtitude`, and `total_rooms` pass through without loss of spatial and structural fidelity.
 - **Sparse Feature Matrix**: The resulting dataset spans **607 features**.
-- **Standardization**: Scaled via `StandardScaler(with_mean=False)` to normalize feature scales while preserving matrix sparsity.
+- **Standardization**: Scaled via `StandardScaler(with_mean=False)` to balance feature variances across dense and sparse columns.
 
 ### 4. Model Training & Comparison
 Two tree-based regression architectures were trained and compared on standardized features:
