@@ -121,7 +121,6 @@ pip install pandas numpy matplotlib seaborn scikit-learn
 ## 🤝 Acknowledgments
 
 - Dataset provided by [Kaggle — Melbourne Housing Snapshot](https://www.kaggle.com/datasets/dansbecker/melbourne-housing-snapshot) (scraped by Tony Pino).
-- Coursework inspiration and guidance from [CampusX](https://www.youtube.com/@campusx-official).
 
 ---
 
