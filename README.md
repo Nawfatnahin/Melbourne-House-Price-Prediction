@@ -57,7 +57,7 @@ Evaluated on an unseen test split (20% holdout, 2,716 samples):
   - **Property Age**: Converted raw construction year into actionable property age:
     $$\text{Property Age} = 2026 - \text{YearBuilt}$$
   - **Total Rooms**: Aggregated structural space into a unified room metric:
-    $$\text{total\_rooms} = \text{Bedroom2} + \text{Bathroom}$$
+    $$\text{Total Rooms} = \text{Bedroom2} + \text{Bathroom}$$
   - **Land-to-Building Ratio**: Quantifies land utilization and density:
     $$\text{landhousingratio} = \frac{\text{BuildingArea}}{\text{Landsize}}$$
 - **Data Cleaning & Zero-Division Sanitization**: Properties with zero land size (such as units and apartments) produce infinite quotients (`np.inf`) during ratio calculation. These values are explicitly replaced with `np.nan` across both train and test splits so that the downstream pipeline handles them gracefully.
